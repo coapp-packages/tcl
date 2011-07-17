@@ -1,0 +1,35 @@
+#product-info  {
+    product-name: "tcl";
+    version: "8.5.10";
+    original-source-location: "http://iweb.dl.sourceforge.net/project/tcl/Tcl/8.5.10/tcl8.5.10-src.tar.gz";
+    original-source-website: "http://www.tcl.tk/software/tcltk/download.html";
+    license: "Custom license, see license.terms";
+    packager: "Vincent Povirk <madewokherd@gmail.com>";
+}
+
+x86 {
+    compiler: vc10-x86;
+      
+    targets: {
+		"win\Release_VC10\tcl85.dll",
+		"win\Release_VC10\tcl85.lib",
+		"win\Release_VC10\tcldde13.dll",
+		"win\Release_VC10\tclpip85.dll",
+		"win\Release_VC10\tclreg12.dll",
+		"win\Release_VC10\tclsh85.exe",
+		"win\Release_VC10\tclstub85.lib"
+    };
+      
+    build-command:@"
+		pushd win
+			nmake -f makefile.vc
+		popd
+    ";
+      
+    clean-command:@"
+        rmdir /S /Q win\Release_VC10 2>NUL
+		del /Q win\nmakehlp.exe
+		del /Q win\nmakehlp.obj
+		del /Q win\versions.vc
+    ";
+};
