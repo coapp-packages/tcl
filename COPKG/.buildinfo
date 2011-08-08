@@ -21,15 +21,64 @@ x86 {
     };
       
     build-command:@"
+       rem best you have your visual studio installed in the default location...
+       IF EXIST ""C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" call ""C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" x86
+       IF EXIST ""C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" call ""C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" x86
+
 		pushd win
+		     del /Q nmakehlp.exe
+		     del /Q nmakehlp.obj
 			nmake -f makefile.vc
 		popd
     ";
       
     clean-command:@"
-        rmdir /S /Q win\Release_VC10 2>NUL
+        IF EXIST win\Release_VC10 rmdir /S /Q win\Release_VC10 2>NUL
 		del /Q win\nmakehlp.exe
 		del /Q win\nmakehlp.obj
 		del /Q win\versions.vc
     ";
 };
+
+
+x64 {
+    compiler: vc10-x64;
+      
+    uses: x86=@".";//we need this cos nmakehelp.exe is required
+
+    targets: {
+		"win\Release_AMD64_VC10\tcl85.dll",
+		"win\Release_AMD64_VC10\tcl85.lib",
+		"win\Release_AMD64_VC10\tcldde13.dll",
+		"win\Release_AMD64_VC10\tclpip85.dll",
+		"win\Release_AMD64_VC10\tclreg12.dll",
+		"win\Release_AMD64_VC10\tclsh85.exe",
+		"win\Release_AMD64_VC10\tclstub85.lib"
+    };
+      
+    build-command:@"
+       rem best you have your visual studio installed in the default location...
+       IF EXIST ""C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" (
+          call ""C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" amd64
+		pushd win
+			nmake -f makefile.vc MACHINE=AMD64
+		popd
+
+       )
+       IF EXIST ""C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" (
+          call ""C:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" x86_amd64
+		pushd win
+			nmake -f makefile.vc MACHINE=AMD64 TCLSH_NATIVE=1
+		popd
+       )
+    ";
+      
+    clean-command:@"
+           IF EXIST win\Release_VC10 rmdir /S /Q win\Release_VC10 2>NUL
+           IF EXIST win\Release_AMD64_VC10 rmdir /S /Q win\Release_AMD64_VC10 2>NUL
+		del /Q win\nmakehlp.exe
+		del /Q win\nmakehlp.obj
+		del /Q win\versions.vc
+    ";
+};
+
